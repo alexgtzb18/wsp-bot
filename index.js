@@ -24,11 +24,9 @@ client.on("ready", () => {
 
     console.log(`========= Mensaje Enviado =========`);
 
-    res
-      .status(201)
-      .json({
-        message: `mensaje enviado al numero ${number} y el mensaje fue: ${message}`,
-      });
+    res.status(201).json({
+      message: `mensaje enviado al numero ${number} y el mensaje fue: ${message}`,
+    });
   });
 
   app.post("/api/v1/wa/send-masive", async (req, res, next) => {
@@ -38,25 +36,37 @@ client.on("ready", () => {
 
       console.log(`========= Mensaje Enviado =========`);
     }
-    res
-      .status(201)
-      .json({
-        message: `mensaje enviado al numero ${numbers} y el mensaje fue: ${message}`,
-      });
+    res.status(201).json({
+      message: `mensaje enviado al numero ${numbers} y el mensaje fue: ${message}`,
+    });
   });
 
-  app.post("/api/v1/wa/send-media", async (req, res, next) => {
+  app.post("/api/v1/wa/send-media-single", async (req, res, next) => {
     const { number, fileName } = req.body;
-    const media = MessageMedia.fromFilePath(`./mediaSend/${fileName}`);
+    const media = MessageMedia.fromFilePath(`./media/${fileName}`);
 
     await client.sendMessage(`521${number}@c.us`, media);
 
     console.log(`========= Mensaje Enviado =========`);
-    res
-      .status(201)
-      .json({
-        message: `mensaje enviado al numero ${numbers} y el mensaje fue: ${media}`,
-      });
+    res.status(201).json({
+      message: `mensaje enviado al numero ${number} y el mensaje fue: ${media}`,
+    });
+  });
+
+  app.post("/api/v1/wa/send-media-masive", async (req, res, next) => {
+    const { numbers, fileName } = req.body;
+
+    for (const number of numbers) {
+      for (const media of fileName) {
+        const medias = MessageMedia.fromFilePath(`./media/${media}`);
+        await client.sendMessage(`521${number}@c.us`, medias);
+      }
+    }
+
+    console.log(`========= Mensaje Enviado =========`);
+    res.status(201).json({
+      message: `mensaje enviado al numero ${numbers} y el mensaje fue: `,
+    });
   });
 
   app.listen(5050, () => {
@@ -65,3 +75,5 @@ client.on("ready", () => {
 });
 
 client.initialize();
+
+// , "code.png", "gamakay.png", "hand.png", "headphones.png", "lights.png", "mac.png", "mesa.png", "mouse.png", "robot.png"
